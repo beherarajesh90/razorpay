@@ -1,6 +1,6 @@
 package com.systemdesign.razorpay.common.enums;
 
-public enum Enivorment {
+public enum Environment {
     LIVE,
     TEST
 }

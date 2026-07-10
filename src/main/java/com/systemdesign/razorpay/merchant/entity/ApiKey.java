@@ -1,13 +1,19 @@
 package com.systemdesign.razorpay.merchant.entity;
 
-import com.systemdesign.razorpay.common.enums.Enivorment;
+import com.systemdesign.razorpay.common.enums.Environment;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "api_key")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ApiKey {
 
     @Id
@@ -26,7 +32,7 @@ public class ApiKey {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private Enivorment environment;
+    private Environment environment;
 
     @Column(nullable = false)
     private boolean enabled = true;
