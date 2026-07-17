@@ -11,16 +11,20 @@ import com.systemdesign.razorpay.merchant.repository.AppUserRepository;
 import com.systemdesign.razorpay.merchant.repository.MerchantRepository;
 import com.systemdesign.razorpay.merchant.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final MerchantRepository merchantRepository;
     private final AppUserRepository appUserRepository;
 
     @Override
+    @Transactional
     public MerchantResponse signup(MerchantSignupRequest request) {
         if (merchantRepository.existsByEmail(request.email())) {
             throw new DuplicateResourceException("DUPLICATE_MERCHANT_EMAIL",
