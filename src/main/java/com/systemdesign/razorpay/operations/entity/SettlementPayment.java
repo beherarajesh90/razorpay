@@ -1,4 +1,4 @@
-package com.systemdesign.razorpay.operations;
+package com.systemdesign.razorpay.operations.entity;
 
 import jakarta.persistence.*;
 
