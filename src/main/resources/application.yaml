@@ -13,3 +13,6 @@ spring:
     username: ${DB_HOST:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+
+vault:
+  master-key: REDACTED_VAULT_MASTER_KEY_2
