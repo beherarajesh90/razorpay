@@ -3,7 +3,9 @@ package com.systemdesign.razorpay.payment.processor.strategy;
 import com.systemdesign.razorpay.payment.processor.PaymentProcessor;
 import com.systemdesign.razorpay.payment.processor.dto.request.PaymentProcessorRequest;
 import com.systemdesign.razorpay.payment.processor.dto.response.PaymentProcessorResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CardPaymentProcessor implements PaymentProcessor {
 
     @Override
