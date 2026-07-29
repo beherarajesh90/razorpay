@@ -1,5 +1,6 @@
 package com.systemdesign.razorpay.payment.controller;
 
+import com.systemdesign.razorpay.merchant.security.MerchantContext;
 import com.systemdesign.razorpay.payment.dto.request.CreateOrderRequest;
 import com.systemdesign.razorpay.payment.dto.response.OrderResponse;
 import com.systemdesign.razorpay.payment.service.OrderService;
@@ -20,11 +21,10 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
-
-    UUID merchantId = UUID.fromString("1f6caca9-cab9-40cd-a491-a714146e5a55");   // TODO: replace it with merchant context
+    private final MerchantContext merchantContext;
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody @Valid CreateOrderRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(merchantId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(merchantContext.getMerchantId(), request));
     }
 }
