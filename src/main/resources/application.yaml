@@ -13,6 +13,11 @@ spring:
     username: ${DB_HOST:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
 
 vault:
   master-key: REDACTED_VAULT_MASTER_KEY=
@@ -37,3 +42,11 @@ payment:
 
 jwt:
   secret-key: REDACTED_JWT_SECRET
+
+app:
+  rate-limit:
+    method: fixedWindow
+    use-case:
+      api-key:
+        max-requests: 2
+        window-seconds: 10

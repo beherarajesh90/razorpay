@@ -2,6 +2,7 @@ package com.systemdesign.razorpay.merchant.service.impl;
 
 import com.systemdesign.razorpay.common.exception.ResourceNotFoundException;
 import com.systemdesign.razorpay.common.util.RandomizerUtil;
+import com.systemdesign.razorpay.merchant.cache.ApiKeyCache;
 import com.systemdesign.razorpay.merchant.dto.request.CreateApiKeyRequest;
 import com.systemdesign.razorpay.merchant.dto.response.ApiKeyCreateResponse;
 import com.systemdesign.razorpay.merchant.dto.response.ApiKeyResponse;
@@ -32,6 +33,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final ApiKeyRepository apiKeyRepository;
     private final ApiKeyMapper apiKeyMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ApiKeyCache apiKeyCache;
 
     @Override
     @Transactional
@@ -61,18 +63,19 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
     @Override
     @Transactional
-    public void revoke(UUID merchantId, UUID keyId) {
-        ApiKey apiKey = apiKeyRepository.findByIdAndMerchant_Id(keyId, merchantId).orElseThrow(
-                () -> new ResourceNotFoundException("ApiKey", keyId)
+    public void revoke(UUID merchantId, UUID apiKeyId) {
+        ApiKey apiKey = apiKeyRepository.findByIdAndMerchant_Id(apiKeyId, merchantId).orElseThrow(
+                () -> new ResourceNotFoundException("ApiKey", apiKeyId)
         );
         apiKey.setEnabled(false);
+        apiKeyCache.evict(apiKey.getKeyId());
     }
 
     @Override
     @Transactional
-    public @Nullable ApiKeyCreateResponse rotate(UUID merchantId, UUID keyId) {
-        ApiKey apiKey = apiKeyRepository.findByIdAndMerchant_Id(merchantId, keyId)
-                .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
+    public @Nullable ApiKeyCreateResponse rotate(UUID merchantId, UUID apiKeyId) {
+        ApiKey apiKey = apiKeyRepository.findByIdAndMerchant_Id(merchantId, apiKeyId)
+                .orElseThrow(() -> new ResourceNotFoundException("ApiKey", apiKeyId));
 
         if(!apiKey.isEnabled()) throw new RuntimeException("cannot rotate a disabled key");
 
@@ -83,6 +86,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         apiKey.setGracePeriodExpiresAt(LocalDateTime.now().plusHours(24));
         apiKey = apiKeyRepository.save(apiKey);
 
+        apiKeyCache.evict(apiKey.getKeyId());
         return new ApiKeyCreateResponse(apiKey.getId(), apiKey.getKeyId(), apiKey.getKeySecretHash(), apiKey.getEnvironment());
     }
 }
