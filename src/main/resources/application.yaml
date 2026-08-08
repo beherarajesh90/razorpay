@@ -45,8 +45,8 @@ jwt:
 
 app:
   rate-limit:
-    method: fixedWindow
+    method: token-bucket
     use-case:
       api-key:
-        max-requests: 2
+        max-requests: 3
         window-seconds: 10

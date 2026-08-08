@@ -1,6 +1,7 @@
 package com.systemdesign.razorpay.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,5 +45,11 @@ public class GlobalExceptionHandler {
                 .header("Retry-After", String.valueOf(ex.getRetryAfterSeconds()))
                 .header("X-RateLimit-Reset", String.valueOf(Instant.now().plusSeconds(ex.getRetryAfterSeconds())))
                 .body(ErrorResponse.of("RATE_LIMIT_EXCEEDED", ex.getMessage()));
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("BAD_REQUEST", ex.getMessage()));
     }
 }
