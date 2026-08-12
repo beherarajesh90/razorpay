@@ -73,7 +73,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
     @Override
     @Transactional
-    public @Nullable ApiKeyCreateResponse rotate(UUID merchantId, UUID apiKeyId) {
+    public ApiKeyCreateResponse rotate(UUID merchantId, UUID apiKeyId) {
         ApiKey apiKey = apiKeyRepository.findByIdAndMerchant_Id(merchantId, apiKeyId)
                 .orElseThrow(() -> new ResourceNotFoundException("ApiKey", apiKeyId));
 
