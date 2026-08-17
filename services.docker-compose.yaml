@@ -51,7 +51,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      CLUSTER_ID: '6PMpHYL9QkeyXRj9Nrp4KA'
+      CLUSTER_ID: 'XuUO1MrQQaGtE2KYgqaU_g'
     volumes:
       - kafka-data:/var/lib/kafka/data
     restart: unless-stopped
@@ -74,7 +74,7 @@ services:
       CONTROL_CENTER_METRICS_TOPIC_REPLICATION: 1
       CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: 2
       CONTROL_CENTER_CONNECT_CLUSTER: http://kafka:8091
-      CONTROL_CENTER_KAFKA_CLUSTER_ID: '6PMpHYL9QkeyXRj9Nrp4KA'
+      CONTROL_CENTER_KAFKA_CLUSTER_ID: 'XuUO1MrQQaGtE2KYgqaU_g'
       CONTROL_CENTER_UI_LABEL: Razorpay Clone Kafka
     restart: unless-stopped
 

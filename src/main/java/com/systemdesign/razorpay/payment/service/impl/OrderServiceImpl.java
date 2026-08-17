@@ -1,5 +1,6 @@
 package com.systemdesign.razorpay.payment.service.impl;
 
+import com.systemdesign.razorpay.common.enums.EventAggregateType;
 import com.systemdesign.razorpay.common.enums.OrderStatus;
 import com.systemdesign.razorpay.common.exception.BusinessRuleViolationException;
 import com.systemdesign.razorpay.common.exception.DuplicateResourceException;
@@ -12,6 +13,7 @@ import com.systemdesign.razorpay.payment.entity.OrderRecord;
 import com.systemdesign.razorpay.payment.entity.Payment;
 import com.systemdesign.razorpay.payment.mapper.OrderMapper;
 import com.systemdesign.razorpay.payment.mapper.PaymentMapper;
+import com.systemdesign.razorpay.payment.outbox.OutboxEventPublisher;
 import com.systemdesign.razorpay.payment.repository.OrderRepository;
 import com.systemdesign.razorpay.payment.repository.PaymentRepository;
 import com.systemdesign.razorpay.payment.service.OrderService;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -36,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentMapper paymentMapper;
     private final OrderMapper orderMapper;
     private final CustomerService customerService;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     @Value("${payment.order.default-order-expiry-minutes: 10}")
     private int defaultOrderExpiryMinutes;
@@ -46,7 +50,6 @@ public class OrderServiceImpl implements OrderService {
         if(request.receipt()!=null && orderRepository.existsByMerchantIdAndReceipt(merchantId, request.receipt())){
             throw new DuplicateResourceException("ORDER_RECEIPT_DUPLICATE","order with receipt already exists: "+request.receipt());
         }
-
 
         UUID customerId = null;
         CreateOrderRequest.CustomerDetails customerDetails = request.customer();
@@ -65,7 +68,14 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         order = orderRepository.save(order);
 
-        // TODO: publish kafka event amount order creation
+        outboxEventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CREATED",
+                Map.of("orderId", order.getId(),
+                        "merchantId", merchantId.toString(),
+                        "orderStatus", order.getOrderStatus().name(),
+                        "amountUnits", order.getAmount().getAmountUnits(),
+                        "amountCurrency", order.getAmount().getCurrency()
+                        )
+                );
 
         return orderMapper.toResponse(order);
     }
@@ -89,6 +99,15 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.CANCELLED);
         order = orderRepository.save(order);
+
+        outboxEventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CANCELLED",
+                Map.of("orderId", order.getId(),
+                        "merchantId", merchantId.toString(),
+                        "orderStatus", order.getOrderStatus().name(),
+                        "amountUnits", order.getAmount().getAmountUnits(),
+                        "amountCurrency", order.getAmount().getCurrency()
+                )
+        );
 
         return orderMapper.toResponse(order);
     }
