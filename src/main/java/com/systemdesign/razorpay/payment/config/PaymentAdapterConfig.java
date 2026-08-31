@@ -24,7 +24,7 @@ public class PaymentAdapterConfig {
         return Map.of(
                 PaymentMethod.CARD, cardPaymentAdapter,
                 PaymentMethod.UPI, upiPaymentAdapter,
-                PaymentMethod.NETBANKING, netBankingPaymentAdapter
+                PaymentMethod.NET_BANKING, netBankingPaymentAdapter
         );
     }
 }

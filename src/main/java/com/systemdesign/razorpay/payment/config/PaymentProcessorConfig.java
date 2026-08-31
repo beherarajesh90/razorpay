@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.smartcardio.Card;
 import java.util.Map;
 
 @Configuration
@@ -26,7 +25,7 @@ public class PaymentProcessorConfig {
         return Map.of(
                 PaymentMethod.CARD, cardPaymentProcessor,
                 PaymentMethod.UPI, upiPaymentProcessor,
-                PaymentMethod.NETBANKING, netBankingPaymentProcessor
+                PaymentMethod.NET_BANKING, netBankingPaymentProcessor
         );
     }
 }

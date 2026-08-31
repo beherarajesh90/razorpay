@@ -44,7 +44,7 @@ public class WebhookKafkaConsumer {
         try {
             Map<String, Object> envelope = record.value();
             Map<String, Object> data = (Map<String, Object>) envelope.get("data");
-            String eventType = (String) data.get("eventType");
+            String eventType = (String) envelope.get("eventType");
             Object rawMerchantId = data.get("merchantId");
 
             if(rawMerchantId == null){

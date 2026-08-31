@@ -25,7 +25,7 @@ public class BankCallbackSimulator {
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
 
-//    @Scheduled(fixedDelayString = "${payment.simulator.poll-interval-ms:5000}")
+    @Scheduled(fixedDelayString = "${payment.simulator.poll-interval-ms:5000}")
     public void processCallbacks(){
         LocalDateTime globalWindow = LocalDateTime.now().minusSeconds(1);
 
@@ -43,7 +43,7 @@ public class BankCallbackSimulator {
     }
 
     private void simulateCallback(Payment payment) {
-        SimulatorConfig.MethodSimulatorConfig methodConfig = simulatorConfig.getMethods().get(payment.getMethod());
+        SimulatorConfig.MethodSimulatorConfig methodConfig = simulatorConfig.getMethods().get(payment.getMethod().toString());
 
         LocalDateTime dueAt = dueAt(payment, methodConfig);
         if(LocalDateTime.now().isBefore(dueAt)){

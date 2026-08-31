@@ -45,7 +45,8 @@ public class WebhookEvent extends BaseEntity {
     private WebhookEventStatus status;
 
     @Column(nullable = false)
-    private Integer attemps = 0;
+    @Builder.Default
+    private Integer attempts = 0;
 
     private LocalDateTime nextRetryAt;
 

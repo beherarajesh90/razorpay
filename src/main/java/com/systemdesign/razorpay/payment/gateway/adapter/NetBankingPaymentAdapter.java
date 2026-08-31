@@ -27,7 +27,7 @@ public class NetBankingPaymentAdapter implements PaymentAdapter {
         try {
             PaymentProcessorRequest paymentProcessorRequest = PaymentProcessorRequest.nonCard(
                     request.paymentId(),
-                    PaymentMethod.NETBANKING,
+                    PaymentMethod.NET_BANKING,
                     request.amount(),
                     request.methodDetails()
             );

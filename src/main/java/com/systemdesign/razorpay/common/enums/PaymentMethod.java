@@ -2,7 +2,7 @@ package com.systemdesign.razorpay.common.enums;
 
 public enum PaymentMethod {
     CARD,
-    NETBANKING,
+    NET_BANKING,
     UPI,
     WALLET,
 }
