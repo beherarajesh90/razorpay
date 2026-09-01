@@ -42,9 +42,9 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
-threads:
-  virtual:
-    enabled: true
+  threads:
+    virtual:
+      enabled: true
 
 vault:
   master-key: REDACTED_VAULT_MASTER_KEY=

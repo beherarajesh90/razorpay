@@ -2,8 +2,14 @@ package com.systemdesign.razorpay.operations.entity;
 
 import com.systemdesign.razorpay.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "settlement_payment")
 public class SettlementPayment extends BaseEntity {
 

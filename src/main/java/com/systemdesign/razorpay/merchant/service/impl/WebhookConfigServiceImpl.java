@@ -3,7 +3,7 @@ package com.systemdesign.razorpay.merchant.service.impl;
 import com.systemdesign.razorpay.common.dto.WebhookTarget;
 import com.systemdesign.razorpay.common.exception.ResourceNotFoundException;
 import com.systemdesign.razorpay.common.util.RandomizerUtil;
-import com.systemdesign.razorpay.merchant.api.MerchantWebhookApi.MerchantWebhookApi;
+import com.systemdesign.razorpay.merchant.api.MerchantLookupService;
 import com.systemdesign.razorpay.merchant.dto.request.WebhookConfigRequest;
 import com.systemdesign.razorpay.merchant.dto.response.WebhookConfigResponse;
 import com.systemdesign.razorpay.merchant.entity.Merchant;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantWebhookApi {
+public class WebhookConfigServiceImpl implements WebhookConfigService {
 
     private final WebhookConfigRepository webhookConfigRepository;
     private final MerchantRepository merchantRepository;
@@ -89,18 +89,5 @@ public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantW
                 .orElseThrow(() -> new ResourceNotFoundException("MerchantWebhookConfig", configId));
         webhookConfigRepository.delete(config);
         log.info("Merchant webhook config deleted id={} merchantId={}", configId, merchantId);
-    }
-
-    @Override
-    public List<WebhookTarget> getActiveConfigsForEvent(UUID merchantId, String eventType) {
-        return webhookConfigRepository.findByMerchant_IdAndEnabledTrue(merchantId).stream()
-                .filter(config -> config.isSubscribedTo(eventType))
-                .map(config -> {
-                    byte[] cipherBytes = Base64.getDecoder().decode(config.getWebhookSecret());
-                    byte[] decryptedSecretBytes = bytesEncryptor.decrypt(cipherBytes);
-                    return new WebhookTarget(config.getId(), config.getTargetUrl(),
-                            new String(decryptedSecretBytes, StandardCharsets.UTF_8));
-                })
-                .toList();
     }
 }
