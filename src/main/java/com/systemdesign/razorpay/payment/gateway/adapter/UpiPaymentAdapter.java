@@ -1,6 +1,7 @@
 package com.systemdesign.razorpay.payment.gateway.adapter;
 
 import com.systemdesign.razorpay.common.enums.PaymentMethod;
+import com.systemdesign.razorpay.common.entity.Money;
 import com.systemdesign.razorpay.payment.gateway.PaymentAdapter;
 import com.systemdesign.razorpay.payment.gateway.dto.request.PaymentRequest;
 import com.systemdesign.razorpay.payment.gateway.dto.respose.PaymentResult;
@@ -48,5 +49,10 @@ public class UpiPaymentAdapter implements PaymentAdapter {
     @Override
     public PaymentResult capture(UUID paymentId) {
         return new PaymentResult.Success("UPI_REF");
+    }
+
+    @Override
+    public PaymentResult refund(UUID paymentId, Money amount) {
+        return new PaymentResult.Success("UPI_REFUND_REF");
     }
 }

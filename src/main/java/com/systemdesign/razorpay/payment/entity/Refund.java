@@ -13,7 +13,10 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "refund")
+@Table(name = "refund", uniqueConstraints = @UniqueConstraint(
+        name = "uk_refund_merchant_idempotency_key",
+        columnNames = {"merchant_id", "idempotency_key"}
+))
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,11 +35,15 @@ public class Refund extends BaseEntity {
     @Column(nullable = false)
     private UUID merchantId;
 
+    @Column(nullable = false, length = 100)
+    private String idempotencyKey;
+
     @Embedded
-    private Money money;
+    private Money amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private RefundStatus status = RefundStatus.PENDING;
 
     @Column(length = 100)

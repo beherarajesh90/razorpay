@@ -1,6 +1,7 @@
 package com.systemdesign.razorpay.payment.gateway;
 
 import com.systemdesign.razorpay.common.enums.PaymentMethod;
+import com.systemdesign.razorpay.common.entity.Money;
 import com.systemdesign.razorpay.payment.gateway.dto.request.PaymentRequest;
 import com.systemdesign.razorpay.payment.gateway.dto.respose.PaymentResult;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,11 @@ public class PaymentGatewayRouter {
         }
 
         return paymentAdapter.capture(paymentId);
+    }
+
+    public PaymentResult refund(PaymentMethod method, UUID paymentId, Money amount) {
+        PaymentAdapter paymentAdapter = paymentAdapters.get(method);
+        if (paymentAdapter == null) throw new IllegalArgumentException("No payment adapter registered for method: " + method);
+        return paymentAdapter.refund(paymentId, amount);
     }
 }
