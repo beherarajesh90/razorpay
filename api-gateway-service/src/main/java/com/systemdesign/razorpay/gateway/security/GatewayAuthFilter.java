@@ -5,8 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,6 @@ import java.util.UUID;
 @Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@RequiredArgsConstructor
 public class GatewayAuthFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION = "Authorization";
@@ -35,6 +34,15 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
     private final RestClient authRestClient;
     private final GatewayRoutesProperties routes;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    /**
+     * authRestClient is @Lazy: this filter is created during web init, and an eager load-balanced
+     * client pulls in the Eureka client mid-creation (circular reference, no instances resolved).
+     */
+    public GatewayAuthFilter(@Lazy RestClient authRestClient, GatewayRoutesProperties routes) {
+        this.authRestClient = authRestClient;
+        this.routes = routes;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

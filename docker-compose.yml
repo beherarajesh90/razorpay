@@ -212,6 +212,7 @@ services:
     container_name: api-gateway-service
     environment:
       <<: *service-env
+      MERCHANT_SERVICE_URL: http://merchant-service:8081
     ports:
       - "8080:8080"
 

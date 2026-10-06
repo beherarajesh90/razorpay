@@ -1,6 +1,5 @@
 package com.systemdesign.razorpay.gateway.config;
 
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -9,17 +8,11 @@ import org.springframework.web.client.RestClient;
 public class GatewayClientConfig {
 
     /**
-     * Load-balanced client. Hostnames like "merchant-service" resolve through Eureka.
+     * Plain (not @LoadBalanced) client for the auth call. A load-balanced builder bean here
+     * broke the gateway's own Eureka client at startup. Auth goes to merchant-service by URL.
      */
     @Bean
-    @LoadBalanced
-    public RestClient.Builder loadBalancedRestClientBuilder() {
-        return RestClient.builder();
-    }
-
-    @Bean
-    public RestClient authRestClient(RestClient.Builder loadBalancedRestClientBuilder,
-                                     GatewayRoutesProperties routes) {
-        return loadBalancedRestClientBuilder.baseUrl(routes.getAuthBaseUrl()).build();
+    public RestClient authRestClient(GatewayRoutesProperties routes) {
+        return RestClient.builder().baseUrl(routes.getAuthBaseUrl()).build();
     }
 }
