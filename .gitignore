@@ -34,3 +34,6 @@ build/
 
 # local secrets
 .env
+
+# k8s local secrets
+k8s/secrets.env

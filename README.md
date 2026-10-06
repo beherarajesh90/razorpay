@@ -69,3 +69,26 @@ Covers signup, login, API key, tokenize, order, card payment, and gateway auth. 
 ```bash
 mvn -B -Djava.version=21 test    # unit and Testcontainers integration tests; needs Docker
 ```
+
+## Kubernetes (kind)
+
+Manifests in `k8s/` (kustomize, namespace `razorpay`). Secrets come from `k8s/secrets.env` (git-ignored; copy from `secrets.env.example`).
+
+```bash
+kind create cluster --name razorpay
+docker compose build                       # images razorpay/<service>:latest
+for s in discovery-service config-service merchant-service vault-service payment-service operations-service api-gateway-service; do
+  kind load docker-image razorpay/$s:latest --name razorpay
+done
+kubectl apply -k k8s
+kubectl -n razorpay port-forward svc/api-gateway-service 8080:8080
+BASE_URL=http://localhost:8080 bash scripts/smoke.sh
+```
+
+Notes:
+- Postgres, Redis, Kafka use `emptyDir`: data is lost when the pod restarts. Fine for local runs only.
+- Pods set `enableServiceLinks: false`. Otherwise the Kubernetes `redis` service injects `REDIS_PORT=tcp://...` and Spring fails to start.
+- Services register in Eureka by pod IP (`EUREKA_INSTANCE_PREFER_IP_ADDRESS`). Registering by pod hostname does not resolve across pods.
+- The gateway's Eureka cache can stay stale after startup races. If the gateway returns 503 `Unable to find instance`, restart its deployment.
+- Monitoring (Grafana, Prometheus, Control Center) is not in the cluster manifests yet.
+
