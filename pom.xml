@@ -24,6 +24,7 @@
 		<module>merchant-service</module>
 		<module>api-gateway-service</module>
 		<module>vault-service</module>
+		<module>payment-service</module>
 	</modules>
 
 	<properties>
