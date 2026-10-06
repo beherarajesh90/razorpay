@@ -37,3 +37,6 @@ build/
 
 # k8s local secrets
 k8s/secrets.env
+
+# load test output (contains live API keys)
+loadtest/data/

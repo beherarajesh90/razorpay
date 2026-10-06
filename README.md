@@ -93,3 +93,14 @@ Notes:
 - The gateway's Eureka cache can stay stale after startup races. If the gateway returns 503 `Unable to find instance`, restart its deployment.
 - Monitoring (Grafana, Prometheus, Control Center) is not in the cluster manifests yet.
 
+## Load test (JMeter)
+
+Plan: `loadtest/razorpay-load.jmx` (create order, then init UPI payment, per iteration). Keys come from the stack itself:
+
+```bash
+BASE_URL=http://localhost:8080 bash loadtest/setup-keys.sh 20      # writes loadtest/data/keys.csv (git-ignored)
+jmeter -n -t loadtest/razorpay-load.jmx -Jhost=localhost -Jport=8080   -Jthreads=20 -Jramp=10 -Jduration=120 -Jkeys_file=loadtest/data/keys.csv   -l loadtest/data/results.jtl -e -o loadtest/data/report
+```
+
+Expect some `429`s. Each API key is limited to `app.rate-limit.use-case.api-key.max-requests` (10) per `window-seconds` (10). Raise the limit (merchant-service env `APP_RATE_LIMIT_USE_CASE_API_KEY_MAX_REQUESTS`) to measure throughput rather than the limiter. Keep the default when checking that the limiter works.
+
