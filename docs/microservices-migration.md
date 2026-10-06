@@ -10,8 +10,8 @@ Branch: `microservices` (in this repo; `master` keeps the monolith).
 - **Database:** one Postgres instance, one database per service (`merchant_db`, `payment_db`, `vault_db`, `operations_db`). No cross-service joins or shared tables.
 - **Cross-service calls:** synchronous HTTP via OpenFeign (lookups, tokenize, charge). Async via Kafka outbox (payment/refund/settlement events).
 - **Service discovery:** Eureka. **Config:** Spring Cloud Config, classpath/native profile (no secrets in git).
-- **Edge:** Spring Cloud Gateway MVC. Gateway authenticates API key / JWT, forwards `X-Merchant-Id` / `X-Api-Key-Id`.
-- **Monolith:** kept in `monolith/` until phase 8, as the reference behavior. Deleted at the end.
+- **Edge:** Spring Cloud Gateway MVC. Gateway authenticates API key / JWT, forwards `X-Merchant-Id` / `X-Key-Id`.
+- **Monolith:** kept in `monolith/` through phases 0-6 as the reference behavior. Removed in phase 7; still on `master`.
 
 ## Target services
 
@@ -35,7 +35,7 @@ Branch: `microservices` (in this repo; `master` keeps the monolith).
 4. **payment-service:** payment/order/refund domain; Feign clients to merchant and vault.
 5. **operations-service:** settlement, webhook, DLQ; Feign clients to merchant and payment; Kafka consumers.
 6. **Local infra:** per-service Dockerfiles, compose file with one DB per service, Zipkin / Prometheus.
-7. **Cutover:** delete `monolith/`, update README, run end-to-end smoke flow.
+7. **Cutover:** delete `monolith/`, update README, run end-to-end smoke flow (not yet run; needs Docker).
 
 ## Out of scope (for now)
 

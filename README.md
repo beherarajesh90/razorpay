@@ -1,6 +1,6 @@
 # razorpay
 
-Payment gateway clone, split into microservices. The original monolith is in `monolith/` until the cutover. Migration plan: [docs/microservices-migration.md](docs/microservices-migration.md).
+Payment gateway clone, split into microservices. The monolith it was split from is on `master` (removed from this branch in phase 7). Migration plan: [docs/microservices-migration.md](docs/microservices-migration.md).
 
 ## Services
 
