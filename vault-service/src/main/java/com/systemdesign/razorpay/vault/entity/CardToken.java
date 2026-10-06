@@ -27,7 +27,7 @@ public class CardToken extends BaseEntity {
     @JoinColumn(name = "vault_card_id", nullable = false)
     private VaultCard vaultCard;
 
-    @Column(nullable = false)
+    /** Optional: tokens can be created without a customer (tokenize DTO allows null). */
     private UUID customer;
 
     @Column(nullable = false)
