@@ -1,6 +1,12 @@
 # Shared defaults for every service. Secrets come from env vars, never from this file.
 # Eureka client settings stay in each service's own application.yaml (discovery must not register itself).
 management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
   endpoints:
     web:
       exposure:
