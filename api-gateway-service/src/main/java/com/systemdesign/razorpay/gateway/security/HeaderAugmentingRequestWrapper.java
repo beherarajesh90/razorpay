@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * Adds identity headers and hides Authorization from downstream services.
+ * Identity headers come only from here. Any X-Merchant-Id / X-Key-Id / Authorization sent by the
+ * client is hidden, so a caller cannot pick its own merchant. A null merchantId means no identity.
  */
 public class HeaderAugmentingRequestWrapper extends HttpServletRequestWrapper {
 
@@ -29,16 +31,16 @@ public class HeaderAugmentingRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-        if (AUTHORIZATION.equalsIgnoreCase(name)) {
-            return null;
+        switch (name.toLowerCase(Locale.ROOT)) {
+            case "authorization":
+                return null;
+            case "x-merchant-id":
+                return merchantId == null ? null : merchantId.toString();
+            case "x-key-id":
+                return keyId;
+            default:
+                return super.getHeader(name);
         }
-        if (HEADER_MERCHANT_ID.equalsIgnoreCase(name)) {
-            return merchantId.toString();
-        }
-        if (HEADER_KEY_ID.equalsIgnoreCase(name) && keyId != null) {
-            return keyId;
-        }
-        return super.getHeader(name);
     }
 
     @Override
@@ -56,14 +58,23 @@ public class HeaderAugmentingRequestWrapper extends HttpServletRequestWrapper {
         Enumeration<String> original = super.getHeaderNames();
         while (original.hasMoreElements()) {
             String name = original.nextElement();
-            if (!AUTHORIZATION.equalsIgnoreCase(name)) {
+            if (!isGatewayOwned(name)) {
                 names.add(name);
             }
         }
-        names.add(HEADER_MERCHANT_ID);
+        if (merchantId != null) {
+            names.add(HEADER_MERCHANT_ID);
+        }
         if (keyId != null) {
             names.add(HEADER_KEY_ID);
         }
         return Collections.enumeration(names);
+    }
+
+    private boolean isGatewayOwned(String name) {
+        String lower = name.toLowerCase(Locale.ROOT);
+        return lower.equals(AUTHORIZATION.toLowerCase(Locale.ROOT))
+                || lower.equals(HEADER_MERCHANT_ID.toLowerCase(Locale.ROOT))
+                || lower.equals(HEADER_KEY_ID.toLowerCase(Locale.ROOT));
     }
 }

@@ -41,7 +41,8 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         if (isPublic(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
+            // No identity on public routes, but still strip any client-sent identity headers.
+            filterChain.doFilter(new HeaderAugmentingRequestWrapper(request, null, null), response);
             return;
         }
 
