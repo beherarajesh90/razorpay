@@ -1,0 +1,13 @@
+# Shared defaults for every service. Secrets come from env vars, never from this file.
+# Eureka client settings stay in each service's own application.yaml (discovery must not register itself).
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
