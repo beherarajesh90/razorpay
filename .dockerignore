@@ -1,0 +1,6 @@
+**/target/
+monolith/
+.git/
+.idea/
+docs/
+**/.mvn/wrapper/maven-wrapper.jar
