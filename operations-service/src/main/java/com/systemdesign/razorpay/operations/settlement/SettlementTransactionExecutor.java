@@ -69,6 +69,7 @@ public class SettlementTransactionExecutor {
         Settlement settlement = Settlement.builder()
                 .merchantId(merchantId)
                 .grossAmount(gross)
+                .refundAmount(Money.of(0, gross.getCurrency()))
                 .feeAmount(feeAmount)
                 .gstAmount(gstAmount)
                 .netAmount(netAmount)

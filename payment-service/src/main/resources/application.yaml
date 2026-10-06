@@ -36,6 +36,7 @@ server:
 
 eureka:
   client:
+    registry-fetch-interval-seconds: 10
     service-url:
       defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8761/eureka/}
 
