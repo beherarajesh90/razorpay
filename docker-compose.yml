@@ -68,6 +68,27 @@ services:
       - kafka-data:/var/lib/kafka/data
     restart: unless-stopped
 
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.5.0
+    container_name: razorpay-control-center
+    depends_on:
+      kafka:
+        condition: service_started
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_COMMAND_TOPIC_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_METRICS_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: 2
+      CONTROL_CENTER_UI_LABEL: Razorpay Kafka
+    restart: unless-stopped
+
   zipkin:
     image: openzipkin/zipkin:3
     container_name: razorpay-zipkin
@@ -82,6 +103,21 @@ services:
       - "9090:9090"
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.6.0
+    container_name: razorpay-grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
     restart: unless-stopped
 
   discovery-service:
@@ -199,3 +235,4 @@ volumes:
   postgres-data:
   redis-data:
   kafka-data:
+  grafana-data:
