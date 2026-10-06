@@ -38,14 +38,19 @@ Status: all phases done on branch `microservices`. Verified against the local co
 5. **operations-service** - done. Settlement, webhooks, DLQ, Kafka consumers.
 6. **Local infra** - done. Dockerfile, compose (postgres, redis, kafka, zipkin, prometheus, grafana, control center), Postgres init script.
 7. **Cutover** - done. `monolith/` removed on this branch; still on `master`.
-8. **Hardening (post-cutover)** - done: Flyway migrations (`V1` baseline, `V2` card_token customer), error mapping fixes, Testcontainers integration tests, smoke script, Grafana dashboards, Control Center.
+8. **Hardening (post-cutover)** - done: Flyway migrations (`V1` baseline, `V2` card_token customer), error mapping fixes, Grafana dashboards, Control Center.
+9. **Tests** - done: unit (common-lib), Testcontainers integration (merchant, vault, payment, operations settlement and webhook), gateway auth filter tests, live smoke script (`scripts/smoke.sh`).
+10. **Kubernetes** - done, verified on kind: kustomize manifests in `k8s/`, persistent volumes for Postgres, Redis, Kafka; monitoring (Prometheus, Grafana, Control Center) in `k8s/monitoring/`.
+11. **Load test** - done: JMeter plan in `loadtest/`, key setup script.
 
-Not yet done: Kubernetes manifests, JMeter load test, settlement/webhook automated tests, secret rotation (parked), merge to `master`.
+Merged to `master` (fast-forward) and pushed to `origin`.
+
+Not yet done: secret rotation (parked: GitHub PAT in the reference repo, JWT and vault keys on `master`, Grafana admin password). Production hardening beyond the local kind setup (TLS, ingress, managed Kafka and Postgres, HA replicas).
 
 ## Out of scope (for now)
 
-- Kubernetes manifests (reference repo has them; add after phase 7).
-- Load tests (JMeter).
+- Ingress, TLS, managed cloud Kafka/Postgres/Redis, multi-replica HA.
+- Automated settlement/webhook checks in CI (they run in the operations integration test; the smoke script is HTTP-only).
 
 ## Known issues to fix while migrating
 
