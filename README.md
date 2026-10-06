@@ -86,7 +86,8 @@ BASE_URL=http://localhost:8080 bash scripts/smoke.sh
 ```
 
 Notes:
-- Postgres, Redis, Kafka use `emptyDir`: data is lost when the pod restarts. Fine for local runs only.
+- Postgres (5Gi), Redis (1Gi, appendonly) and Kafka (10Gi) use PersistentVolumeClaims on the default StorageClass. Data survives pod restarts. Deleting the PVCs (`kubectl -n razorpay delete pvc --all`) wipes data.
+- Postgres init scripts run only on an empty volume. The first apply after switching from `emptyDir` needs the app pods restarted so Flyway creates the schema.
 - Pods set `enableServiceLinks: false`. Otherwise the Kubernetes `redis` service injects `REDIS_PORT=tcp://...` and Spring fails to start.
 - Services register in Eureka by pod IP (`EUREKA_INSTANCE_PREFER_IP_ADDRESS`). Registering by pod hostname does not resolve across pods.
 - The gateway's Eureka cache can stay stale after startup races. If the gateway returns 503 `Unable to find instance`, restart its deployment.
