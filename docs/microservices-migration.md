@@ -26,16 +26,21 @@ Branch: `microservices` (in this repo; `master` keeps the monolith).
 | payment-service | 8083 | orders, payments, refunds, gateway adapters, state machine, outbox, bank simulator | `payment/**` |
 | operations-service | 8084 | settlements, webhook delivery, DLQ, retry queue | `operations/**` |
 
-## Phases (one commit each)
+## Phases (one commit each) - status
 
-0. **Baseline:** move monolith to `monolith/`, add this plan. Monolith still compiles.
-1. **Shared kernel + infra:** root aggregator pom, `common-lib`, `discovery-service`, `config-service`.
-2. **merchant-service + gateway:** merchant domain, internal lookup endpoints, gateway auth.
-3. **vault-service:** vault domain, card charge moved here; internal tokenize/charge endpoints.
-4. **payment-service:** payment/order/refund domain; Feign clients to merchant and vault.
-5. **operations-service:** settlement, webhook, DLQ; Feign clients to merchant and payment; Kafka consumers.
-6. **Local infra:** per-service Dockerfiles, compose file with one DB per service, Zipkin / Prometheus.
-7. **Cutover:** delete `monolith/`, update README, run end-to-end smoke flow (not yet run; needs Docker).
+Status: all phases done on branch `microservices`. Verified against the local compose stack.
+
+0. **Baseline** - done. Monolith moved to `monolith/`, plan added.
+1. **Shared kernel + infra** - done. Aggregator pom, `common-lib`, `discovery-service`, `config-service`.
+2. **merchant-service + gateway** - done. Merchant domain, internal lookups, gateway auth.
+3. **vault-service** - done. Card vault, tokenize, internal charge.
+4. **payment-service** - done. Orders, payments, refunds; Feign to merchant and vault.
+5. **operations-service** - done. Settlement, webhooks, DLQ, Kafka consumers.
+6. **Local infra** - done. Dockerfile, compose (postgres, redis, kafka, zipkin, prometheus, grafana, control center), Postgres init script.
+7. **Cutover** - done. `monolith/` removed on this branch; still on `master`.
+8. **Hardening (post-cutover)** - done: Flyway migrations (`V1` baseline, `V2` card_token customer), error mapping fixes, Testcontainers integration tests, smoke script, Grafana dashboards, Control Center.
+
+Not yet done: Kubernetes manifests, JMeter load test, settlement/webhook automated tests, secret rotation (parked), merge to `master`.
 
 ## Out of scope (for now)
 

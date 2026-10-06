@@ -44,3 +44,28 @@ The gateway strips `Authorization` and forwards `X-Merchant-Id` / `X-Key-Id` to 
 ## Service-to-service calls
 
 Internal endpoints live under `/internal/v1/**` and are not routed by the gateway.
+
+## Monitoring
+
+| Tool | URL | Notes |
+|---|---|---|
+| Grafana | http://localhost:3000 | Dashboards in the Razorpay folder. Login admin / admin (default; see `GRAFANA_ADMIN_PASSWORD` in `.env.example`) |
+| Confluent Control Center | http://localhost:9021 | Kafka topics, consumer lag, broker health |
+| Prometheus | http://localhost:9090 | Scrapes `/actuator/prometheus` on each service |
+| Zipkin | http://localhost:9411 | Traces |
+
+## Smoke test
+
+With the stack running:
+
+```bash
+bash scripts/smoke.sh      # BASE_URL defaults to http://localhost:8080
+```
+
+Covers signup, login, API key, tokenize, order, card payment, and gateway auth. Settlement and webhooks are not covered by the script.
+
+## Tests
+
+```bash
+mvn -B -Djava.version=21 test    # unit and Testcontainers integration tests; needs Docker
+```
