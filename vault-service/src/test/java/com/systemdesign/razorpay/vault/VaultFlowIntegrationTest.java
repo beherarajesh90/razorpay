@@ -25,11 +25,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "eureka.client.enabled=false",
         "spring.cloud.config.enabled=false",
         "spring.cloud.discovery.enabled=false",
-        "vault.master-key=REDACTED_VAULT_MASTER_KEY="
 })
 @AutoConfigureMockMvc
 @Testcontainers
 class VaultFlowIntegrationTest {
+
+    /** Fresh random key per test run. Never a literal, so no secret is committed. */
+    static final String TEST_VAULT_KEY = randomKey(32);
+
+    static String randomKey(int bytes) {
+        byte[] b = new byte[bytes];
+        new java.security.SecureRandom().nextBytes(b);
+        return java.util.Base64.getEncoder().encodeToString(b);
+    }
+
+    @DynamicPropertySource
+    static void keyProperties(DynamicPropertyRegistry registry) {
+        registry.add("vault.master-key", () -> TEST_VAULT_KEY);
+    }
 
     @Container
     @ServiceConnection

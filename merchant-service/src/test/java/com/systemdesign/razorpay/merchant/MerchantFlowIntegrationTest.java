@@ -27,8 +27,6 @@ import org.springframework.http.MediaType;
         "eureka.client.enabled=false",
         "spring.cloud.config.enabled=false",
         "spring.cloud.discovery.enabled=false",
-        "vault.master-key=REDACTED_VAULT_MASTER_KEY=",
-        "jwt.secret-key=integration-test-secret-key-that-is-long-enough-for-hs512-0123456789",
         "app.rate-limit.method=token-bucket",
         "app.rate-limit.use-case.api-key.max-requests=1000",
         "app.rate-limit.use-case.api-key.window-seconds=10"
@@ -36,6 +34,22 @@ import org.springframework.http.MediaType;
 @AutoConfigureMockMvc
 @Testcontainers
 class MerchantFlowIntegrationTest {
+
+    /** Fresh random key per test run. Never a literal, so no secret is committed. */
+    static final String TEST_VAULT_KEY = randomKey(32);
+    static final String TEST_JWT_KEY = randomKey(64);
+
+    static String randomKey(int bytes) {
+        byte[] b = new byte[bytes];
+        new java.security.SecureRandom().nextBytes(b);
+        return java.util.Base64.getEncoder().encodeToString(b);
+    }
+
+    @DynamicPropertySource
+    static void keyProperties(DynamicPropertyRegistry registry) {
+        registry.add("vault.master-key", () -> TEST_VAULT_KEY);
+        registry.add("jwt.secret-key", () -> TEST_JWT_KEY);
+    }
 
     @Container
     @ServiceConnection
