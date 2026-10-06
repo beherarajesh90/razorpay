@@ -17,6 +17,10 @@ resources:
   - services/payment-service.yaml
   - services/operations-service.yaml
   - services/api-gateway-service.yaml
+  - monitoring/configmaps.yaml
+  - monitoring/prometheus.yaml
+  - monitoring/grafana.yaml
+  - monitoring/control-center.yaml
 
 secretGenerator:
   - name: app-secrets

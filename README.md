@@ -91,7 +91,10 @@ Notes:
 - Pods set `enableServiceLinks: false`. Otherwise the Kubernetes `redis` service injects `REDIS_PORT=tcp://...` and Spring fails to start.
 - Services register in Eureka by pod IP (`EUREKA_INSTANCE_PREFER_IP_ADDRESS`). Registering by pod hostname does not resolve across pods.
 - The gateway's Eureka cache can stay stale after startup races. If the gateway returns 503 `Unable to find instance`, restart its deployment.
-- Monitoring (Grafana, Prometheus, Control Center) is not in the cluster manifests yet.
+- Monitoring runs in the cluster (`k8s/monitoring/`). Open it with port-forward:
+  `kubectl -n razorpay port-forward svc/grafana 3000:3000` (admin password = `GRAFANA_ADMIN_PASSWORD` in `k8s/secrets.env`),
+  `svc/prometheus 9090:9090`, `svc/control-center 9021:9021`.
+- Dashboards and Prometheus/Grafana config live in `infra/` (compose source). After editing them, run `python3 k8s/monitoring/gen_configmaps.py` and re-apply.
 
 ## Load test (JMeter)
 

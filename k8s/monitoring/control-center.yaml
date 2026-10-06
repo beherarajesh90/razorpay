@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-center
+  namespace: razorpay
+  labels:
+    app: control-center
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: control-center
+  template:
+    metadata:
+      labels:
+        app: control-center
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: control-center
+          image: confluentinc/cp-enterprise-control-center:7.5.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9021
+          env:
+            - name: CONTROL_CENTER_BOOTSTRAP_SERVERS
+              value: "kafka:9092"
+            - name: CONTROL_CENTER_REPLICATION_FACTOR
+              value: "1"
+            - name: CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS
+              value: "1"
+            - name: CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS
+              value: "1"
+            - name: CONFLUENT_METRICS_TOPIC_REPLICATION
+              value: "1"
+            - name: CONTROL_CENTER_INTERNAL_TOPICS_REPLICATION_FACTOR
+              value: "1"
+            - name: CONTROL_CENTER_COMMAND_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: CONTROL_CENTER_METRICS_TOPIC_REPLICATION
+              value: "1"
+            - name: CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS
+              value: "2"
+            - name: CONTROL_CENTER_UI_LABEL
+              value: "Razorpay Kafka"
+          resources:
+            requests:
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9021
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: control-center
+  namespace: razorpay
+spec:
+  selector:
+    app: control-center
+  ports:
+    - port: 9021
+      targetPort: 9021
