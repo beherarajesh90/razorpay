@@ -9,11 +9,6 @@ x-service-env: &service-env
 
 x-service-base: &service-base
   restart: unless-stopped
-  depends_on:
-    discovery-service:
-      condition: service_started
-    config-service:
-      condition: service_started
 
 services:
   postgres:
@@ -129,10 +124,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
 
   vault-service:
     <<: *service-base
@@ -151,10 +142,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
 
   payment-service:
     <<: *service-base
@@ -174,10 +161,6 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
 
   operations-service:
     <<: *service-base
@@ -196,10 +179,6 @@ services:
       redis:
         condition: service_healthy
       kafka:
-        condition: service_started
-      discovery-service:
-        condition: service_started
-      config-service:
         condition: service_started
 
   api-gateway-service:
