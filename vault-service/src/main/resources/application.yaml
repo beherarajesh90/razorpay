@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: vault-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  datasource:
+    url: ${VAULT_DB_URL:jdbc:postgresql://localhost:5432/vault_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${SERVER_PORT:8082}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8761/eureka/}
+
+# Secrets: must come from env. No defaults on purpose.
+vault:
+  master-key: ${VAULT_MASTER_KEY}
+
+app:
+  rate-limit:
+    method: token-bucket

@@ -23,6 +23,7 @@
 		<module>config-service</module>
 		<module>merchant-service</module>
 		<module>api-gateway-service</module>
+		<module>vault-service</module>
 	</modules>
 
 	<properties>
