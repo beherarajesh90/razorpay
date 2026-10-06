@@ -25,6 +25,7 @@
 		<module>api-gateway-service</module>
 		<module>vault-service</module>
 		<module>payment-service</module>
+		<module>operations-service</module>
 	</modules>
 
 	<properties>
